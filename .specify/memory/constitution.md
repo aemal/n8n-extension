@@ -1,50 +1,61 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+<!--
+Sync Impact Report:
+- Version change: [new] → 1.0.0 (initial version)
+- Added sections: All sections (new constitution)
+- Chrome Extension best practices incorporated
+- Templates requiring updates: ⚠ pending validation
+- Follow-up TODOs: None
+-->
+
+# N8N Chrome Extension Constitution
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### I. Manifest V3 Security-First (NON-NEGOTIABLE)
+All extension development MUST use Manifest V3 architecture. Service workers replace background pages for enhanced security and performance. No remotely hosted code execution allowed - all logic must be bundled within the extension package. This principle ensures compliance with Chrome Web Store requirements and modern security standards.
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+**Rationale**: Manifest V3 is mandatory for Chrome Web Store acceptance and provides critical security improvements including removal of remote code execution vulnerabilities and enhanced content security policies.
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+### II. Least Privilege Permissions
+Extensions MUST request only the minimum permissions necessary for functionality. Permissions are requested incrementally as features are added, with clear justification documented for each permission. Host permissions are scoped to specific domains when possible rather than using broad patterns.
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+**Rationale**: Minimizing permissions reduces attack surface, improves user trust, and aligns with Chrome's security model requiring explicit user consent for sensitive operations.
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+### III. Secure Code Architecture
+All JavaScript, WebAssembly, and CSS code MUST be included in the extension bundle. No external code execution via eval(), new Function(), or remote script loading. Content scripts, service workers, and UI components are architecturally separated with clear boundaries and communication protocols.
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+**Rationale**: Bundled code prevents supply chain attacks and ensures all code undergoes Web Store review. Architectural separation enables better security isolation and debugging.
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+### IV. Content Security Policy Compliance
+Extensions MUST enforce strict Content Security Policy that disallows unsafe-inline, unsafe-eval, and remote resource loading. All dynamic content generation uses safe DOM manipulation methods. CSP violations are treated as security failures requiring immediate resolution.
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+**Rationale**: Strict CSP prevents XSS attacks and code injection vulnerabilities that could compromise user data or browser security.
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+### V. Privacy-First Development
+Extensions MUST minimize data collection, clearly document all data usage, and implement data retention policies. User data stays on-device when possible. Any data transmission requires explicit user consent with clear explanations of purpose and scope.
+
+**Rationale**: User privacy is paramount for Web Store compliance and user trust. Privacy-first design prevents regulatory violations and builds sustainable user relationships.
+
+## Security Requirements
+
+Extensions undergo security review for each release covering permission usage, data handling, and code architecture. Security testing includes CSP validation, permission auditing, and dependency scanning using tools like npm audit and Snyk. All third-party dependencies are vetted for known vulnerabilities before inclusion.
+
+Vulnerability disclosure process requires immediate response to security reports with patches deployed within 48 hours for critical issues. Security documentation is maintained covering threat models, security controls, and incident response procedures.
+
+## Quality Assurance
+
+Automated testing pipeline includes unit tests for business logic, integration tests for Chrome API usage, and end-to-end tests covering user workflows. Testing covers multiple Chrome versions and extension update scenarios.
+
+Code review process requires security-focused review with specific attention to permission usage, data handling, and CSP compliance. Performance testing ensures service worker efficiency and minimal resource consumption.
+
+Release process includes staging environment testing, security scan validation, and incremental rollout monitoring for production issues.
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+Constitution supersedes all other development practices and guides all technical decisions. All code changes must demonstrate compliance with core principles through automated checks and manual review.
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+Amendment process requires documented security impact assessment, stakeholder approval, and migration plan for existing code. Emergency amendments allowed for critical security issues with retrospective documentation within 7 days.
+
+Development guidance maintained in extension-specific documentation covering Chrome API usage patterns, security implementation details, and debugging procedures.
+
+**Version**: 1.0.0 | **Ratified**: 2026-03-25 | **Last Amended**: 2026-03-25
